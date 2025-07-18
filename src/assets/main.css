@@ -1,0 +1,16 @@
+@import './base.css';
+
+#app {
+  @apply h-[100dvh];
+}
+
+.leaflet-popup-content-wrapper {
+  @apply !bg-card;
+  color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.leaflet-popup-tip {
+  @apply !bg-card;
+}
