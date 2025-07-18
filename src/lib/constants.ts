@@ -83,3 +83,51 @@ export const MOCK_ADDRESSES: VehicleAddress[] = [
     neighbourhood: 'Al Majaz',
   },
 ]
+
+export const START_MARKER_ICON = L.divIcon({
+  className: 'route-marker start-marker',
+  html: `
+        <div style="
+          background: #10b981; 
+          color: white; 
+          width: 24px; 
+          height: 24px; 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-weight: bold; 
+          font-size: 12px;
+          border: 2px solid white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        ">
+          S
+        </div>
+      `,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+})
+
+export const END_MARKER_ICON = L.divIcon({
+  className: 'route-marker end-marker',
+  html: `
+        <div style="
+          background: #ef4444; 
+          color: white; 
+          width: 24px; 
+          height: 24px; 
+          border-radius: 50%; 
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          font-weight: bold; 
+          font-size: 12px;
+          border: 2px solid white;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        ">
+          E
+        </div>
+      `,
+  iconSize: [24, 24],
+  iconAnchor: [12, 12],
+})

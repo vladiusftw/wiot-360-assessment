@@ -10,12 +10,20 @@ import ResizablePanel from '@/components/ui/resizable/ResizablePanel.vue'
 import ResizableHandle from '@/components/ui/resizable/ResizableHandle.vue'
 import { useVehicleFilters } from '@/stores/vehicleFilters'
 import { storeToRefs } from 'pinia'
+import Card from '@/components/ui/card/Card.vue'
+import CardContent from '@/components/ui/card/CardContent.vue'
 
 const vehicleFilters = useVehicleFilters()
 const { searchQuery, statuses } = storeToRefs(vehicleFilters)
 const { vehicles } = useVehicles({ searchQuery, statuses })
-const { initializeMap, updateMarkers, invalidateSize, fitBoundsToMarkers, clearCurrentPolyline } =
-  useVehiclesMap('map')
+const {
+  initializeMap,
+  updateMarkers,
+  invalidateSize,
+  fitBoundsToMarkers,
+  clearCurrentPolyline,
+  instance,
+} = useVehiclesMap('map')
 
 const handleResetMap = () => {
   clearCurrentPolyline()
@@ -60,10 +68,16 @@ onBeforeUnmount(() => {
     <ResizableHandle />
 
     <ResizablePanel class="relative flex flex-col items-center" :default-size="55">
-      <div ref="container" id="map" class="w-full h-full"></div>
       <div class="mx-auto absolute top-4 z-full">
         <Button v-on:click="handleResetMap">Reset Map</Button>
       </div>
+      <div ref="container" id="map" class="w-full h-full"></div>
+      <Card v-if="instance.currentPolyline" class="absolute bottom-2 left-2 z-full py-2 px-4">
+        <CardContent class="p-0">
+          <div>Distance: {{ instance.currentPolyline.routeStats.distance }} km</div>
+          <div>Avg. Speed: {{ instance.currentPolyline.routeStats.avgSpeed }} km/h</div>
+        </CardContent>
+      </Card>
     </ResizablePanel>
   </ResizablePanelGroup>
 </template>

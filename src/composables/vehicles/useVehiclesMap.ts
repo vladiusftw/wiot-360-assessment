@@ -1,19 +1,25 @@
 import { createApp, onUnmounted, reactive } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import type { Vehicle } from '@/types/vehicles'
-import { getMarkerIcon } from '@/lib/utils'
+import type { Vehicle, VehicleRouteStats } from '@/types/vehicles'
+import { calculateRouteStats, getMarkerIcon } from '@/lib/utils'
 import LiveVehicleMapPopup from '@/components/maps/live-vehicles/LiveVehicleMapPopup.vue'
+import { END_MARKER_ICON, START_MARKER_ICON } from '@/lib/constants'
 
 interface MapInstance {
   map: L.Map | null
   vehicleMarkers: Map<string, L.Marker>
   selectedVehicle: Vehicle | null
-  currentPolyline: L.Polyline | null
+  currentPolyline: {
+    polyline: L.Polyline
+    startMarker: L.Marker
+    endMarker: L.Marker
+    routeStats: VehicleRouteStats
+  } | null
   isInitialized: boolean
   refCount: number
   isAnimating: boolean
-  pendingUpdate: { vehicles: Vehicle[]; autoFitBounds: boolean } | null
+  pendingUpdate: { vehicles: Vehicle[] } | null
 }
 
 // Global store for all map instances
@@ -38,6 +44,7 @@ export function useVehiclesMap(containerId: string) {
   }
 
   const instance = getInstance()
+
   instance.refCount++
 
   const initializeMap = () => {
@@ -90,23 +97,21 @@ export function useVehiclesMap(containerId: string) {
     return openMarker
   }
 
-  const updateMarkers = (vehicles: Vehicle[], autoFitBounds = true) => {
+  const updateMarkers = (vehicles: Vehicle[]) => {
     if (!instance.map) return
 
     // If animating, queue the update
     if (instance.isAnimating) {
-      instance.pendingUpdate = { vehicles, autoFitBounds }
+      instance.pendingUpdate = { vehicles }
       return
     }
 
     // Process the update immediately
-    processMarkerUpdate(vehicles, autoFitBounds)
+    processMarkerUpdate(vehicles)
   }
 
-  const processMarkerUpdate = (vehicles: Vehicle[], autoFitBounds = true) => {
+  const processMarkerUpdate = (vehicles: Vehicle[]) => {
     if (!instance.map) return
-
-    const openMarker = getOpenMarker()
 
     const currentVehicleIds = new Set<string>()
 
@@ -146,13 +151,17 @@ export function useVehiclesMap(containerId: string) {
       }
     })
 
-    if (
-      autoFitBounds &&
-      instance.vehicleMarkers.size > 0 &&
-      openMarker === null &&
-      !instance.currentPolyline
-    ) {
-      fitBoundsToMarkers()
+    // if (
+    //   autoFitBounds &&
+    //   instance.vehicleMarkers.size > 0 &&
+    //   openMarker === null &&
+    //   !instance.currentPolyline
+    // ) {
+    //   fitBoundsToMarkers()
+    // }
+
+    if (instance.currentPolyline) {
+      drawSelectedVehiclePolyline()
     }
 
     // Clear the pending update after processing
@@ -181,8 +190,8 @@ export function useVehiclesMap(containerId: string) {
 
           // Process any pending updates
           if (instance.pendingUpdate) {
-            const { vehicles, autoFitBounds } = instance.pendingUpdate
-            processMarkerUpdate(vehicles, autoFitBounds)
+            const { vehicles } = instance.pendingUpdate
+            processMarkerUpdate(vehicles)
           }
         })
       }
@@ -204,7 +213,27 @@ export function useVehiclesMap(containerId: string) {
     if (!instance.selectedVehicle || !instance.map) return
     clearCurrentPolyline()
 
-    const polyline = L.polyline(instance.selectedVehicle.history, { color: 'red' })
+    const history = instance.selectedVehicle.history
+
+    if (history.length < 2) return // can show toast to notify the user
+
+    const routeStats = calculateRouteStats(history)
+
+    const polyline = L.polyline(history, { color: 'red' })
+
+    const startMarker = L.marker(history[0], {
+      icon: START_MARKER_ICON,
+    }).bindTooltip('Route Start', {
+      permanent: false,
+      direction: 'top',
+    })
+
+    const endMarker = L.marker(history[history.length - 1], {
+      icon: END_MARKER_ICON,
+    }).bindTooltip('Route end', {
+      permanent: false,
+      direction: 'top',
+    })
 
     const openMarker = getOpenMarker()
     if (openMarker) openMarker.closePopup()
@@ -213,16 +242,31 @@ export function useVehiclesMap(containerId: string) {
 
     setTimeout(() => {
       polyline.addTo(instance.map as L.Map)
+
+      startMarker.addTo(instance.map as L.Map)
+      if (endMarker) endMarker.addTo(instance.map as L.Map)
     }, 300)
 
-    instance.currentPolyline = polyline
+    instance.currentPolyline = {
+      polyline,
+      routeStats,
+      startMarker,
+      endMarker,
+    }
   }
 
   const clearCurrentPolyline = () => {
     if (!instance.currentPolyline) return
 
-    instance.currentPolyline.remove()
+    instance.isAnimating = true
+
+    instance.currentPolyline.polyline.remove()
+    instance.currentPolyline.startMarker.remove()
+    if (instance.currentPolyline.endMarker) instance.currentPolyline.endMarker.remove()
+
     instance.currentPolyline = null
+
+    instance.isAnimating = false
   }
 
   const getPopupContent = (vehicle: Vehicle) => {

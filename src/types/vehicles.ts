@@ -12,11 +12,13 @@ export type Vehicle = {
   }
   address: VehicleAddress
   lastUpdated: string
-  history: {
-    lat: number
-    lng: number
-    timestamp: string
-  }[]
+  history: VehicleRoutePoint[]
+}
+
+export type VehicleRoutePoint = {
+  lat: number
+  lng: number
+  timestamp: string
 }
 
 export type GetVehiclesFilters = {
@@ -29,4 +31,14 @@ export type VehicleAddress = {
   country?: string
   road?: string
   neighbourhood?: string
+}
+
+export type VehicleRouteStats = {
+  distance: string
+  duration: string
+  avgSpeed: string
+  maxSpeed: string
+  startTime: string
+  endTime: string
+  totalPoints: number
 }

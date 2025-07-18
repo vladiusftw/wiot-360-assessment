@@ -20,7 +20,7 @@ export function useVehicles({ searchQuery, statuses }: Filters) {
   } = useQuery({
     queryKey: ['vehicles'],
     queryFn: () => getVehicles({ searchQuery: searchQuery.value, statuses: statuses.value }),
-    refetchInterval: computed(() => (isPolling.value ? 4000 : false)),
+    refetchInterval: computed(() => (isPolling.value ? 5000 : false)),
     refetchIntervalInBackground: true,
     staleTime: 1000,
     gcTime: 30000,
