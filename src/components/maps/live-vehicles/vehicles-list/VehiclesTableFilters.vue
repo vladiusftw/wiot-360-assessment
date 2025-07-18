@@ -2,7 +2,7 @@
 import Input from '@/components/ui/input/Input.vue'
 import ToggleGroup from '@/components/ui/toggle-group/ToggleGroup.vue'
 import ToggleGroupItem from '@/components/ui/toggle-group/ToggleGroupItem.vue'
-import { STATUS_BG_COLORS, STATUSES } from '@/lib/constants'
+import { STATUSES, TOGGLE_STATUS_BG_COLORS } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { useVehicleFilters } from '@/stores/vehicleFilters'
 import { useDebounceFn } from '@vueuse/core'
@@ -42,7 +42,7 @@ watch(searchQuery, (newValue) => {
         :class="
           cn(
             'size-4 !rounded-full p-0 border-0 hover:opacity-100 transition-all',
-            STATUS_BG_COLORS[item],
+            TOGGLE_STATUS_BG_COLORS[item],
             statuses.includes(item) ? 'opacity-100 ' : 'opacity-60',
           )
         "

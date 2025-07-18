@@ -55,10 +55,16 @@ export const markerIcons = {
   }),
 }
 
-export const STATUS_BG_COLORS: { [key in VehicleStatus]: string } = {
+export const TOGGLE_STATUS_BG_COLORS: { [key in VehicleStatus]: string } = {
   online: 'data-[state=on]:bg-green-400 data-[state=off]:bg-green-400',
   alert: `data-[state=on]:bg-red-700 data-[state=off]:bg-red-700`,
   offline: `data-[state=on]:bg-gray-400 data-[state=off]:bg-gray-400`,
+}
+
+export const STATUS_BG_COLORS: { [key in VehicleStatus]: string } = {
+  online: 'bg-green-400',
+  alert: `bg-red-700`,
+  offline: `bg-gray-400`,
 }
 
 export const STATUSES: VehicleStatus[] = ['online', 'offline', 'alert']

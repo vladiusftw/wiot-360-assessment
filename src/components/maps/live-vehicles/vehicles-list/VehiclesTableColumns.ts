@@ -1,4 +1,5 @@
-import { formatTimeFromISO } from '@/lib/utils'
+import { STATUS_BG_COLORS } from '@/lib/constants'
+import { cn, formatTimeFromISO } from '@/lib/utils'
 import type { Vehicle } from '@/types/vehicles'
 import type { ColumnDef } from '@tanstack/vue-table'
 import { h } from 'vue'
@@ -19,6 +20,14 @@ export const vehiclesTableColumns: ColumnDef<Vehicle>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
+    cell: ({ row }) => {
+      const status = row.original.status
+
+      return h('div', { class: 'flex items-center gap-1' }, [
+        h('span', { class: 'capitalize' }, status),
+        h('div', { class: cn('size-2 rounded-full', STATUS_BG_COLORS[status]) }),
+      ])
+    },
   },
   {
     accessorKey: 'address',
