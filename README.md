@@ -1,61 +1,29 @@
 # wiot-360-assessment
 
-This template should help get you started developing with Vue 3 in Vite.
+## Getting Started
 
-## Recommended IDE Setup
+#### 1. Installation
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
+```
+npm i
 ```
 
-### Compile and Hot-Reload for Development
+#### 2. Running in dev
 
-```sh
+```
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+## Factors Considered
 
-```sh
-npm run build
-```
+#### - Data is auto generated, so it won't look accurate physically as auto generation can cause the vehicles to be in the sea
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+#### - Did not apply responsiveness to mobile as this dashboard does not seem like something to be used on a phone
 
-```sh
-npm run test:unit
-```
+## Future Improvements If Provided the Time
 
-### Run End-to-End Tests with [Cypress](https://www.cypress.io/)
+#### - Add test cases for both components
 
-```sh
-npm run test:e2e:dev
-```
+#### - Have E2E test case for when user click on a row in the table
 
-This runs the end-to-end tests against the Vite development server.
-It is much faster than the production build.
-
-But it's still recommended to test the production build with `test:e2e` before deploying (e.g. in CI environments):
-
-```sh
-npm run build
-npm run test:e2e
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
-```
+#### Have unit tests for the helper functions in utils
